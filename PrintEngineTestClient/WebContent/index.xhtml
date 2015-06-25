@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<h:head>
+		<title>Demo Client Print Engine</title>
+	</h:head>
+	<h:body>
+		<h:form id="frm" enctype="multipart/form-data">
+			<p:outputPanel style="margin:100px;">
+				<div style="background-color:#E8F1FA; border:1px solid black; margin:5px; padding:5px">
+					<h:outputLabel for="templateUpload" value="Template"/>
+					<br/>
+					<h:inputFile id="templateUpload" value="#{demoBean.file}"/>
+					<br/>
+					<br/>
+						
+					<h:outputLabel for="fileType" value="File type"/>
+					<h:selectOneRadio id="fileType" value="#{demoBean.fileType}" >
+						<f:selectItem itemValue=".doc" itemLabel=".doc"/>
+						<f:selectItem itemValue=".docx" itemLabel=".docx"/>
+					</h:selectOneRadio>
+					<br/>
+					<h:outputLabel for="responseType" value="Response type"/>
+					<h:selectOneRadio id="responseType" value="#{demoBean.responseType}">
+						<f:selectItem itemValue=".doc" itemLabel=".doc"/>
+						<f:selectItem itemValue=".docx" itemLabel=".docx"/>
+						<f:selectItem itemValue=".pdf" itemLabel=".pdf (beta)"/>
+					</h:selectOneRadio>
+				</div>
+				
+				<p:outputPanel id="dataPanel">
+					<ui:repeat id="data" value="#{demoBean.data}" var="dataItem" varStatus="var">
+						<div style="background-color:#DBEAF9; border:1px solid black; margin:5px; padding:5px; margin-top:10px;'">
+							<ui:repeat value="#{dataItem}" var="bookmarkEntry" varStatus="bookmarkVar">
+								<div style="background-color:#CDD6DF; border:1px solid black; margin:5px; padding:5px;">
+									<h:outputLabel value="Bookmark Name:  "/>
+									<h:outputText value="#{bookmarkEntry.key}"/>
+									<br/>
+									<br/>
+									<h:outputLabel value="Prefix: "/>
+									<h:inputText value="#{demoBean.data[var.index][bookmarkVar.index].prefix}"/>
+									<br/>
+									<h:outputLabel value="Suffix: "/>
+									<h:inputText value="#{demoBean.data[var.index][bookmarkVar.index].suffix}"/>
+									<br/>
+									<br/>
+									<p:outputPanel rendered="#{demoBean.getLengthOfValues(var.index, bookmarkVar.index) gt 1}">
+										<h:outputLabel  value="Multivalue behaviour:"/>
+										<h:selectOneRadio value="#{demoBean.data[var.index][bookmarkVar.index].asList}">
+											<f:selectItem itemValue="false" itemLabel="Comma separated"/>
+											<f:selectItem itemValue="true" itemLabel="List"/>
+										</h:selectOneRadio>
+									</p:outputPanel>
+									<div style="margin-top:10px">
+										<ui:repeat value="#{bookmarkEntry.values}" varStatus="valueVar">
+											<h:inputText value="#{demoBean.data[var.index][bookmarkVar.index].values[valueVar.index]}"/>
+											<p:commandLink actionListener="#{demoBean.deleteValue(var.index, bookmarkVar.index, valueVar.index)}" value="X" style="color:red; text-decoration:none;" process=":frm:dataPanel" update=":frm:dataPanel"/><br/>
+										</ui:repeat>
+									</div>
+									<br/>
+									<p:commandButton value="New Value" actionListener="#{demoBean.addValue(var.index, bookmarkVar.index)}" process=":frm:dataPanel" update=":frm:dataPanel" />
+									<p:commandLink actionListener="#{demoBean.deleteBookmark(var.index, bookmarkVar.index)}" value="X" style="float:right; color:red; text-decoration:none;" process=":frm:dataPanel" update=":frm:dataPanel"/>
+								</div>
+							</ui:repeat>
+							<p:commandButton value="New Bookmark" actionListener="#{demoBean.setNewBookmarkNameIndex(var.index)}" oncomplete="PF('newBookmarkDialog').show()" process="@this"/>
+							<p:commandLink actionListener="#{demoBean.deleteDataRow(var.index)}" value="X" style="float:right; color:red; text-decoration:none;" process=":frm:dataPanel" update=":frm:dataPanel :frm:startButton"/>
+						</div>
+						
+					</ui:repeat>
+				</p:outputPanel>
+							
+				<br/>
+				<br/>
+				<p:commandButton value="New Data record" actionListener="#{demoBean.addDataRow}" update=":frm:dataPanel startButton" process="@this, dataPanel"/>
+				<br/>
+				<br/>
+				<p:commandButton id="startButton" value="Start demo" actionListener="#{demoBean.start}" ajax="false" disabled="#{demoBean.data.size() gt 0 ? 'false' : 'true'}" style="float:right;">
+					<p:fileDownload value="#{demoBean.downloadFile}"/>
+				</p:commandButton>
+				 		
+				 		
+				<p:dialog id="newBookmarkDialog" widgetVar="newBookmarkDialog" height="300" width="400" modal="true" dynamic="true" closeOnEscape="true" focus="newBookmarkNameInput">
+					<h:outputText for="newBookmarkNameInput" value="Name of new Bookmark:"/>
+					<p:focus for="newBookmarkNameInput"/>
+					<h:inputText id="newBookmarkNameInput" value="#{demoBean.newBookmarkName}"/>
+					<br/>
+					<p:commandButton id="createBookmark" value="Create" actionListener="#{demoBean.addBookmark}" update=":frm:dataPanel newBookmarkDialog" oncomplete="PF('newBookmarkDialog').hide()" process=":frm:newBookmarkDialog :frm:dataPanel"/>
+					<p:defaultCommand target="createBookmark"/>
+				</p:dialog>	 
+			</p:outputPanel>		
+		</h:form>
+		
+	</h:body>
+</html>

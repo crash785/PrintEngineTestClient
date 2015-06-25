@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//src/ch/whitecoast/printengine/objects/PrintRequestObj.java=UTF-8
+encoding//src/ch/whitecoast/printengine/objects/PrintResponseObj.java=UTF-8
+encoding//src/ch/whitecoast/printengine/objects/Value.java=UTF-8
+encoding//src/ch/whitecoast/printengine/objects/ValueMap.java=UTF-8
+encoding//src/ch/whitecoast/printengine/service/PrintService.java=UTF-8
+encoding//src/ch/whitecoast/printengine/service/PrintServiceService.java=UTF-8
+encoding//src/ch/whitecoast/printengine/service/PrintServiceServiceLocator.java=UTF-8
+encoding//src/ch/whitecoast/printengine/service/PrintServiceSoapBindingStub.java=UTF-8
